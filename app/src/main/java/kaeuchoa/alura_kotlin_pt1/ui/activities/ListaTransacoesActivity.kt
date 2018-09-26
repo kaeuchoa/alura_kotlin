@@ -14,8 +14,9 @@ class ListaTransacoesActivity : AppCompatActivity(){
 
         val transacoes = listOf("Comida R$ 20,50", "Economia R$ 100,00")
 
-        ArrayAdapter(this,android.R.layout.simple_list_item_1,transacoes)
+        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, transacoes)
 
+        lista_transacoes_listview.adapter = arrayAdapter
 
 
     }
