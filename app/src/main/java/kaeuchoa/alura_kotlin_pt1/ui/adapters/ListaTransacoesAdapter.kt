@@ -1,15 +1,16 @@
 package kaeuchoa.alura_kotlin_pt1.ui.adapters
 
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import kaeuchoa.alura_kotlin_pt1.R
 import kaeuchoa.alura_kotlin_pt1.extensions.formataParaBrasileiro
+import kaeuchoa.alura_kotlin_pt1.models.TipoTransacao
 import kaeuchoa.alura_kotlin_pt1.models.Transacao
 import kotlinx.android.synthetic.main.transacao_item.view.*
-import java.text.SimpleDateFormat
 
 class ListaTransacoesAdapter (listaTransacoes: List<Transacao>, context: Context) : BaseAdapter(){
 
@@ -20,6 +21,13 @@ class ListaTransacoesAdapter (listaTransacoes: List<Transacao>, context: Context
         val view = LayoutInflater.from(context).inflate(R.layout.transacao_item, parent, false)
         val transacao : Transacao = listaTransacoes[position]
 
+        if(transacao.tipo == TipoTransacao.RECEITA){
+            view.transacao_valor.setTextColor(ContextCompat.getColor(context,R.color.receita))
+            view.transacao_icone.setBackgroundResource(R.drawable.icone_transacao_item_receita)
+        }else{
+            view.transacao_valor.setTextColor(ContextCompat.getColor(context,R.color.despesa))
+            view.transacao_icone.setBackgroundResource(R.drawable.icone_transacao_item_despesa)
+        }
 
 
         view.transacao_data.text = transacao.data.formataParaBrasileiro()

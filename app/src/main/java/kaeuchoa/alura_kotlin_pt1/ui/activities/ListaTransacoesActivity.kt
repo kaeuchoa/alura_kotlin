@@ -9,16 +9,31 @@ import kaeuchoa.alura_kotlin_pt1.ui.adapters.ListaTransacoesAdapter
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 import java.math.BigDecimal
 
-class ListaTransacoesActivity : AppCompatActivity(){
+class ListaTransacoesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_transacoes)
 
-        val transacoes = listOf(Transacao(valor = BigDecimal(20.50), tipo =TipoTransacao.DESPESA),
-                Transacao(valor = BigDecimal(100),categoria = "Economia",tipo = TipoTransacao.RECEITA))
+        val transacoes = listOf(
+                Transacao(
+                        valor = BigDecimal(20.50),
+                        tipo = TipoTransacao.DESPESA),
+                Transacao(
+                        valor = BigDecimal(100),
+                        categoria = "Economia",
+                        tipo = TipoTransacao.RECEITA),
+                Transacao(
+                        valor = BigDecimal(50),
+                        tipo = TipoTransacao.DESPESA,
+                        categoria = "Compras"),
+                Transacao(
+                        valor = BigDecimal(150.0),
+                        tipo = TipoTransacao.RECEITA,
+                        categoria = "Bônus")
+        )
 
-        lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes,this)
+        lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
 
 
     }
