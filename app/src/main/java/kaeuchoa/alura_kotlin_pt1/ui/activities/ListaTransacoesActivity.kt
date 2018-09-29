@@ -15,7 +15,19 @@ class ListaTransacoesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_transacoes)
 
-        val transacoes = listOf(
+        val transacoes: List<Transacao> = getListaExemplos()
+
+        configuraListaTransacoes(transacoes)
+
+
+    }
+
+    private fun configuraListaTransacoes(transacoes: List<Transacao>) {
+        lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
+    }
+
+    private fun getListaExemplos(): List<Transacao> {
+        return listOf(
                 Transacao(
                         valor = BigDecimal(20.50),
                         tipo = TipoTransacao.DESPESA),
@@ -37,10 +49,6 @@ class ListaTransacoesActivity : AppCompatActivity() {
                         categoria = "Teste de Categoria com nome grande"
                 )
         )
-
-        lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
-
-
     }
 
 }
