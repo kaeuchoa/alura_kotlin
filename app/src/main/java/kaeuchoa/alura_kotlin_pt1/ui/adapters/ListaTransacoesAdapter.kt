@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import kaeuchoa.alura_kotlin_pt1.R
 import kaeuchoa.alura_kotlin_pt1.extensions.formataParaBrasileiro
+import kaeuchoa.alura_kotlin_pt1.extensions.formataParaMoedaBR
 import kaeuchoa.alura_kotlin_pt1.models.TipoTransacao
 import kaeuchoa.alura_kotlin_pt1.models.Transacao
 import kotlinx.android.synthetic.main.transacao_item.view.*
@@ -32,7 +33,7 @@ class ListaTransacoesAdapter (listaTransacoes: List<Transacao>, context: Context
 
         view.transacao_data.text = transacao.data.formataParaBrasileiro()
         view.transacao_categoria.text = transacao.categoria
-        view.transacao_valor.text = transacao.valor.toString()
+        view.transacao_valor.text = transacao.valor.formataParaMoedaBR()
 
 
         return view
