@@ -30,7 +30,12 @@ class ListaTransacoesActivity : AppCompatActivity() {
                 Transacao(
                         valor = BigDecimal(150.0),
                         tipo = TipoTransacao.RECEITA,
-                        categoria = "Bônus")
+                        categoria = "Bônus"),
+                Transacao(
+                        valor = BigDecimal(25.35),
+                        tipo = TipoTransacao.DESPESA,
+                        categoria = "Teste de Categoria com nome grande"
+                )
         )
 
         lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
