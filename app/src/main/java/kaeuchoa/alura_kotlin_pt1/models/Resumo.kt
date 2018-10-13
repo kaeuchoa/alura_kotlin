@@ -11,7 +11,7 @@ class Resumo(private val transacoes: List<Transacao>) {
     val total get() = receita.subtract(despesa)
 
     private fun somaPorTipo(tipo : TipoTransacao) : BigDecimal{
-        val somaTransacoes = transacoes
+        val somaTransacoes: Double = transacoes
                 .filter { it.tipo == tipo }
                 .sumByDouble { it.valor.toDouble() }
         return BigDecimal(somaTransacoes)
