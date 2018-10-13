@@ -2,31 +2,22 @@ package kaeuchoa.alura_kotlin_pt1.models
 
 import java.math.BigDecimal
 
-class Resumo (private val transacoes : List<Transacao>) {
+class Resumo(private val transacoes: List<Transacao>) {
 
-    fun valorReceita() : BigDecimal{
-        var receitaTotal = BigDecimal.ZERO
-        for (transacao in transacoes) {
-            if (transacao.tipo == TipoTransacao.RECEITA) {
-                receitaTotal = receitaTotal.plus(transacao.valor)
-            }
-        }
-        return receitaTotal
+    val receita get() = somaPorTipo(TipoTransacao.RECEITA)
+
+    val despesa get() = somaPorTipo(TipoTransacao.DESPESA)
+
+    val total get() = receita.subtract(despesa)
+
+    private fun somaPorTipo(tipo : TipoTransacao) : BigDecimal{
+        val somaTransacoes = transacoes
+                .filter { it.tipo == tipo }
+                .sumByDouble { it.valor.toDouble() }
+        return BigDecimal(somaTransacoes)
+
     }
 
-    fun valorDespesa(): BigDecimal{
-        var despesaTotal = BigDecimal.ZERO
-        for (transacao in transacoes) {
-            if (transacao.tipo == TipoTransacao.DESPESA) {
-                despesaTotal = despesaTotal.plus(transacao.valor)
-            }
-        }
 
-        return despesaTotal
-    }
-
-    fun calculaTotal(): BigDecimal {
-        return valorReceita().subtract(valorDespesa())
-    }
 
 }

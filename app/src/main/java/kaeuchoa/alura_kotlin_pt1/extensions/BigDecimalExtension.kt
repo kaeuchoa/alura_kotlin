@@ -11,4 +11,5 @@ fun BigDecimal.formataParaMoedaBR(): String {
     return numberFormat
             .format(this)
             .replace("R$", "R$ ")
+            .replace("-R$ ", "R$ -")
 }
