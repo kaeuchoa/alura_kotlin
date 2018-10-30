@@ -1,6 +1,7 @@
 package kaeuchoa.alura_kotlin_pt1.ui.activities
 
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -17,25 +18,26 @@ import kaeuchoa.alura_kotlin_pt1.ui.ResumoView
 import kaeuchoa.alura_kotlin_pt1.ui.adapters.ListaTransacoesAdapter
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 import kotlinx.android.synthetic.main.form_transacao.view.*
+import java.lang.NumberFormatException
 import java.math.BigDecimal
+import java.text.SimpleDateFormat
 import java.util.*
 
 class ListaTransacoesActivity : AppCompatActivity() {
+    private val listaTransacoes : MutableList<Transacao> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_transacoes)
 
-        val transacoes: List<Transacao> = getListaExemplos()
+        configuraResumo()
 
-        configuraResumo(transacoes)
-
-        configuraListaTransacoes(transacoes)
+        configuraListaTransacoes()
     }
 
-    private fun configuraResumo(transacoes: List<Transacao>) {
+    private fun configuraResumo() {
         val decorView: View = window.decorView
-        val resumoView = ResumoView(this,decorView, transacoes)
+        val resumoView = ResumoView(this,decorView, listaTransacoes)
         resumoView.atualizaView()
 
         lista_transacoes_adiciona_receita.setOnClickListener {
@@ -60,41 +62,48 @@ class ListaTransacoesActivity : AppCompatActivity() {
             viewFormulario.form_transacao_categoria.adapter = adapter
             AlertDialog.Builder(this)
                     .setTitle(R.string.adiciona_receita)
-                    .setPositiveButton("Adicionar", null)
+                    .setPositiveButton("Adicionar") { dialog, i ->
+                        val valorEmTexto = viewFormulario.form_transacao_valor.text.toString()
+
+                        val valor = try {
+                            BigDecimal(valorEmTexto)
+                        }catch (e : NumberFormatException){
+                            Toast.makeText(this,"Erro na conversão do valor", Toast.LENGTH_LONG).show()
+                            BigDecimal.ZERO
+                        }
+
+                        val dataEmTexto = viewFormulario.form_transacao_data.text.toString()
+                        val formatoBrasileiro = SimpleDateFormat("dd/MM/yyyy")
+                        val data: Date = formatoBrasileiro.parse(dataEmTexto)
+                        val calendar = Calendar.getInstance()
+                        calendar.time = data
+
+                        val categoriaEmTexto = viewFormulario.form_transacao_categoria.selectedItem.toString()
+
+                        val novaTransacao = Transacao(valor = valor, categoria = categoriaEmTexto, data = calendar, tipo = TipoTransacao.RECEITA)
+
+                        atualizaTransacoes(novaTransacao)
+
+
+                    }
                     .setNegativeButton("Cancelar",null)
                     .setView(viewFormulario)
                     .show()
         }
     }
 
-
-    private fun configuraListaTransacoes(transacoes: List<Transacao>) {
-        lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
+    private fun atualizaTransacoes(novaTransacao: Transacao) {
+        listaTransacoes.add(novaTransacao)
+        configuraResumo()
+        configuraListaTransacoes()
+        lista_transacoes_adiciona_menu.close(true)
     }
 
-    private fun getListaExemplos(): List<Transacao> {
-        return listOf(
-                Transacao(
-                        valor = BigDecimal(20.50),
-                        tipo = TipoTransacao.DESPESA),
-                Transacao(
-                        valor = BigDecimal(100),
-                        categoria = "Economia",
-                        tipo = TipoTransacao.RECEITA),
-                Transacao(
-                        valor = BigDecimal(50),
-                        tipo = TipoTransacao.DESPESA,
-                        categoria = "Compras"),
-                Transacao(
-                        valor = BigDecimal(150.0),
-                        tipo = TipoTransacao.RECEITA,
-                        categoria = "Bônus"),
-                Transacao(
-                        valor = BigDecimal(25.35),
-                        tipo = TipoTransacao.DESPESA,
-                        categoria = "Teste de Categoria com nome grande"
-                )
-        )
+
+    private fun configuraListaTransacoes() {
+        lista_transacoes_listview.adapter = ListaTransacoesAdapter(listaTransacoes, this)
     }
+
+
 
 }
