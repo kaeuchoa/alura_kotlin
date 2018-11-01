@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import kaeuchoa.alura_kotlin_pt1.R
-import kaeuchoa.alura_kotlin_pt1.R.id.lista_transacoes_adiciona_menu
 import kaeuchoa.alura_kotlin_pt1.delegate.TransacaoDelegate
 import kaeuchoa.alura_kotlin_pt1.extensions.converteParaCalendar
 import kaeuchoa.alura_kotlin_pt1.extensions.formataParaBrasileiro
@@ -24,25 +23,30 @@ class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
                               private val context: Context) {
 
     private val viewFormulario: View = criaLayout()
-    fun configuraDialog(transacaoDelegate: TransacaoDelegate){
+    private val campoCategoria = viewFormulario.form_transacao_categoria
+    private val campoData = viewFormulario.form_transacao_data
+    private val campoValor = viewFormulario.form_transacao_valor
+
+    fun configuraDialog(tipo: TipoTransacao, transacaoDelegate: TransacaoDelegate) {
         configuraCampoData()
-        configuraCampoCategoria()
-        configuraFormulario(transacaoDelegate)
+        configuraCampoCategoria(tipo)
+        configuraFormulario(tipo, transacaoDelegate)
     }
 
-    private fun configuraFormulario(transacaoDelegate: TransacaoDelegate) {
+    private fun configuraFormulario(tipo: TipoTransacao, transacaoDelegate: TransacaoDelegate) {
+        val titulo = tituloPor(tipo)
         AlertDialog.Builder(context)
-                .setTitle(R.string.adiciona_receita)
+                .setTitle(titulo)
                 .setPositiveButton("Adicionar") { _, _ ->
-                    val valorEmTexto = viewFormulario.form_transacao_valor.text.toString()
+                    val valorEmTexto = campoValor.text.toString()
 
                     val valor = converteCampoValor(valorEmTexto)
 
-                    val dataEmTexto = viewFormulario.form_transacao_data.text.toString()
+                    val dataEmTexto = campoData.text.toString()
                     val calendar = dataEmTexto.converteParaCalendar()
-                    val categoriaEmTexto = viewFormulario.form_transacao_categoria.selectedItem.toString()
+                    val categoriaEmTexto = campoCategoria.selectedItem.toString()
 
-                    val novaTransacao = Transacao(valor = valor, categoria = categoriaEmTexto, data = calendar, tipo = TipoTransacao.RECEITA)
+                    val novaTransacao = Transacao(valor = valor, categoria = categoriaEmTexto, data = calendar, tipo = tipo)
 
                     transacaoDelegate.delegate(novaTransacao)
 
@@ -53,6 +57,13 @@ class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
                 .show()
     }
 
+    private fun tituloPor(tipo: TipoTransacao): Int {
+        if (tipo == TipoTransacao.RECEITA) {
+            return R.string.adiciona_receita
+        }
+        return R.string.adiciona_despesa
+
+    }
 
 
     private fun converteCampoValor(valorEmTexto: String): BigDecimal {
@@ -64,11 +75,20 @@ class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
         }
     }
 
-    private fun configuraCampoCategoria() {
+    private fun configuraCampoCategoria(tipo: TipoTransacao) {
+        val categorias = categoriaPor(tipo)
         val adapter = ArrayAdapter.createFromResource(context,
-                R.array.categorias_de_receita,
+                categorias,
                 android.R.layout.simple_spinner_dropdown_item)
-        viewFormulario.form_transacao_categoria.adapter = adapter
+        campoCategoria.adapter = adapter
+    }
+
+    private fun categoriaPor(tipo: TipoTransacao): Int {
+        return if (tipo == TipoTransacao.RECEITA) {
+            R.array.categorias_de_receita
+        } else {
+            R.array.categorias_de_despesa
+        }
     }
 
     private fun configuraCampoData() {
@@ -77,12 +97,12 @@ class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
         val mes = dataAtual[Calendar.MONTH]
         val ano = dataAtual[Calendar.YEAR]
 
-        viewFormulario.form_transacao_data.setText(dataAtual.formataParaBrasileiro())
-        viewFormulario.form_transacao_data.setOnClickListener {
+        campoData.setText(dataAtual.formataParaBrasileiro())
+        campoData.setOnClickListener {
             DatePickerDialog(context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val dataSelecionada = Calendar.getInstance()
                 dataSelecionada.set(year, month, dayOfMonth)
-                viewFormulario.form_transacao_data.setText(dataSelecionada.formataParaBrasileiro())
+                campoData.setText(dataSelecionada.formataParaBrasileiro())
             }, ano, mes, dia).show()
         }
     }

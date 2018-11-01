@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import kaeuchoa.alura_kotlin_pt1.R
 import kaeuchoa.alura_kotlin_pt1.delegate.TransacaoDelegate
+import kaeuchoa.alura_kotlin_pt1.models.TipoTransacao
 import kaeuchoa.alura_kotlin_pt1.models.Transacao
 import kaeuchoa.alura_kotlin_pt1.ui.ResumoView
 import kaeuchoa.alura_kotlin_pt1.ui.adapters.ListaTransacoesAdapter
@@ -30,14 +31,22 @@ class ListaTransacoesActivity : AppCompatActivity() {
         resumoView.atualizaView()
 
         lista_transacoes_adiciona_receita.setOnClickListener {
-            AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
-                    .configuraDialog(object : TransacaoDelegate {
-                        override fun delegate(transacaoCriada: Transacao) {
-                            atualizaTransacoes(transacaoCriada)
-                            lista_transacoes_adiciona_menu.close(true)
-                        }
-                    })
+            chamaDialogAdicao(TipoTransacao.RECEITA)
         }
+
+        lista_transacoes_adiciona_despesa.setOnClickListener {
+            chamaDialogAdicao(TipoTransacao.DESPESA)
+        }
+    }
+
+    private fun chamaDialogAdicao(tipo: TipoTransacao) {
+        AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
+                .configuraDialog(tipo, object : TransacaoDelegate {
+                    override fun delegate(transacaoCriada: Transacao) {
+                        atualizaTransacoes(transacaoCriada)
+                        lista_transacoes_adiciona_menu.close(true)
+                    }
+                })
     }
 
     private fun atualizaTransacoes(novaTransacao: Transacao) {
