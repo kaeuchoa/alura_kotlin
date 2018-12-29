@@ -19,25 +19,35 @@ import java.lang.NumberFormatException
 import java.math.BigDecimal
 import java.util.*
 
-class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
-                              private val context: Context) {
+class AlteraTransacaoDialog(private val viewGroup: ViewGroup,
+                            private val context: Context) {
 
     private val viewFormulario: View = criaLayout()
     private val campoCategoria = viewFormulario.spin_transacao_categoria
     private val campoData = viewFormulario.form_transacao_data
     private val campoValor = viewFormulario.form_transacao_valor
 
-    fun configuraDialog(tipo: TipoTransacao, transacaoDelegate: TransacaoDelegate) {
+    fun configuraDialog(transacao: Transacao, transacaoDelegate: TransacaoDelegate) {
+        val tipo: TipoTransacao = transacao.tipo
         configuraCampoData()
         configuraCampoCategoria(tipo)
         configuraFormulario(tipo, transacaoDelegate)
+
+        campoData.setText(transacao.data.formataParaBrasileiro())
+        campoValor.setText(transacao.valor.toString())
+        val categoriasArray = context.resources.getStringArray(categoriaPor(tipo))
+        val posicaoCategoria = categoriasArray.indexOf(transacao.categoria)
+        campoCategoria.setSelection(posicaoCategoria,true)
+
+
     }
+
 
     private fun configuraFormulario(tipo: TipoTransacao, transacaoDelegate: TransacaoDelegate) {
         val titulo = tituloPor(tipo)
         AlertDialog.Builder(context)
                 .setTitle(titulo)
-                .setPositiveButton("Adicionar") { _, _ ->
+                .setPositiveButton("Alterar") { _, _ ->
                     val valorEmTexto = campoValor.text.toString()
 
                     val valor = converteCampoValor(valorEmTexto)
@@ -59,9 +69,9 @@ class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
 
     private fun tituloPor(tipo: TipoTransacao): Int {
         if (tipo == TipoTransacao.RECEITA) {
-            return R.string.adiciona_receita
+            return R.string.altera_receita
         }
-        return R.string.adiciona_despesa
+        return R.string.altera_despesa
 
     }
 
@@ -76,9 +86,10 @@ class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
     }
 
     private fun configuraCampoCategoria(tipo: TipoTransacao) {
-        val categorias = categoriaPor(tipo)
+        val categoriasId = categoriaPor(tipo)
+
         val adapter = ArrayAdapter.createFromResource(context,
-                categorias,
+                categoriasId,
                 android.R.layout.simple_spinner_dropdown_item)
         campoCategoria.adapter = adapter
     }
@@ -96,8 +107,6 @@ class AdicionaTransacaoDialog(private val viewGroup: ViewGroup,
         val dia = dataAtual[Calendar.DAY_OF_MONTH]
         val mes = dataAtual[Calendar.MONTH]
         val ano = dataAtual[Calendar.YEAR]
-
-        campoData.setText(dataAtual.formataParaBrasileiro())
         campoData.setOnClickListener {
             DatePickerDialog(context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val dataSelecionada = Calendar.getInstance()

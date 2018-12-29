@@ -11,6 +11,7 @@ import kaeuchoa.alura_kotlin_pt1.models.Transacao
 import kaeuchoa.alura_kotlin_pt1.ui.ResumoView
 import kaeuchoa.alura_kotlin_pt1.ui.adapters.ListaTransacoesAdapter
 import kaeuchoa.alura_kotlin_pt1.ui.dialog.AdicionaTransacaoDialog
+import kaeuchoa.alura_kotlin_pt1.ui.dialog.AlteraTransacaoDialog
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 
 class ListaTransacoesActivity : AppCompatActivity() {
@@ -31,26 +32,36 @@ class ListaTransacoesActivity : AppCompatActivity() {
         resumoView.atualizaView()
 
         lista_transacoes_adiciona_receita.setOnClickListener {
-            chamaDialogAdicao(TipoTransacao.RECEITA)
+            abirDialogAdicao(TipoTransacao.RECEITA)
         }
 
         lista_transacoes_adiciona_despesa.setOnClickListener {
-            chamaDialogAdicao(TipoTransacao.DESPESA)
+            abirDialogAdicao(TipoTransacao.DESPESA)
         }
     }
 
-    private fun chamaDialogAdicao(tipo: TipoTransacao) {
+    private fun abirDialogAdicao(tipo: TipoTransacao) {
         AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
                 .configuraDialog(tipo, object : TransacaoDelegate {
-                    override fun delegate(transacaoCriada: Transacao) {
-                        atualizaTransacoes(transacaoCriada)
+                    override fun delegate(transacao: Transacao) {
+                        listaTransacoes.add(transacao)
+                        atualizaTransacoes()
                         lista_transacoes_adiciona_menu.close(true)
                     }
                 })
     }
 
-    private fun atualizaTransacoes(novaTransacao: Transacao) {
-        listaTransacoes.add(novaTransacao)
+    private fun abrirDialogAlteracao(transacao: Transacao, posicao: Int) {
+        AlteraTransacaoDialog(window.decorView as ViewGroup, this)
+                .configuraDialog(transacao, object : TransacaoDelegate {
+                    override fun delegate(transacao: Transacao) {
+                        listaTransacoes[posicao] = transacao
+                        atualizaTransacoes()
+                    }
+                })
+    }
+
+    private fun atualizaTransacoes() {
         configuraResumo()
         configuraListaTransacoes()
     }
@@ -58,6 +69,10 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
     private fun configuraListaTransacoes() {
         lista_transacoes_listview.adapter = ListaTransacoesAdapter(listaTransacoes, this)
+        lista_transacoes_listview.setOnItemClickListener { parent, view, position, id ->
+            val transacao = listaTransacoes[position]
+            abrirDialogAlteracao(transacao, position)
+        }
     }
 
 

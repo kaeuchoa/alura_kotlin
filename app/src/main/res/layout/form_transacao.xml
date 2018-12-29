@@ -46,7 +46,7 @@
         android:textSize="12dp" />
 
     <Spinner
-        android:id="@+id/form_transacao_categoria"
+        android:id="@+id/spin_transacao_categoria"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
