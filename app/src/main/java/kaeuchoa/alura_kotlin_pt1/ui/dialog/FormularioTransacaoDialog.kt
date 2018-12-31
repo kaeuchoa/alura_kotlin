@@ -22,10 +22,11 @@ import java.util.*
 open class FormularioTransacaoDialog (private val context: Context,
                                       private val viewGroup: ViewGroup) {
     private val viewFormulario: View = criaLayout()
-    private val campoCategoria = viewFormulario.spin_transacao_categoria
-    private val campoData = viewFormulario.form_transacao_data
-    private val campoValor = viewFormulario.form_transacao_valor
-    fun configuraDialog(tipo: TipoTransacao, transacaoDelegate: TransacaoDelegate) {
+    protected val campoCategoria = viewFormulario.spin_transacao_categoria
+    protected val campoData = viewFormulario.form_transacao_data
+    protected val campoValor = viewFormulario.form_transacao_valor
+
+    fun abreDialog(tipo: TipoTransacao, transacaoDelegate: TransacaoDelegate) {
         configuraCampoData()
         configuraCampoCategoria(tipo)
         configuraFormulario(tipo, transacaoDelegate)
@@ -80,7 +81,7 @@ open class FormularioTransacaoDialog (private val context: Context,
         campoCategoria.adapter = adapter
     }
 
-    private fun categoriaPor(tipo: TipoTransacao): Int {
+    protected fun categoriaPor(tipo: TipoTransacao): Int {
         return if (tipo == TipoTransacao.RECEITA) {
             R.array.categorias_de_receita
         } else {

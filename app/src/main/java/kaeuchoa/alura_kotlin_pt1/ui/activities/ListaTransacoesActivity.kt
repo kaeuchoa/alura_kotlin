@@ -45,7 +45,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
     private fun abirDialogAdicao(tipo: TipoTransacao) {
         AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
-                .configuraDialog(tipo, object : TransacaoDelegate {
+                .abreDialog(tipo, object : TransacaoDelegate {
                     override fun delegate(transacao: Transacao) {
                         adiciona(transacao)
                         atualizaTransacoes()
@@ -62,7 +62,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
     private fun abrirDialogAlteracao(transacao: Transacao, posicao: Int) {
         AlteraTransacaoDialog(viewGroup, this)
-                .configuraDialog(transacao, object : TransacaoDelegate {
+                .abreDialog(transacao, object : TransacaoDelegate {
                     override fun delegate(transacao: Transacao) {
                         altera(transacao, posicao)
                         atualizaTransacoes()
