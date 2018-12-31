@@ -4,7 +4,7 @@ Código desenvolvido com base nas aulas dos cursos da plataforma de ensino onlin
 <ul>
   <li> <strong> Kotlin parte 1: sua primeira app Android na linguagem </strong> - Concluído </li>
   <li> <strong> Kotlin parte 2: Mais recursos da linguagem e boas práticas </strong> - Concluído </li>
-  <li> <strong> Kotlin parte 3: Técnicas avançadas na sua app </strong> - Não Iniciado</li>
+  <li> <strong> Kotlin parte 3: Técnicas avançadas na sua app </strong> - Concluído</li>
 </ul>
 
 Dentro deste projeto foram abordados os seguintes tópicos:
