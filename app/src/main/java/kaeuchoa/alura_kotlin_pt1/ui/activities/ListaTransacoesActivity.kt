@@ -16,6 +16,9 @@ import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 
 class ListaTransacoesActivity : AppCompatActivity() {
     private val listaTransacoes : MutableList<Transacao> = mutableListOf()
+    private val viewGroup by lazy {
+        window.decorView as ViewGroup
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,21 +47,31 @@ class ListaTransacoesActivity : AppCompatActivity() {
         AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
                 .configuraDialog(tipo, object : TransacaoDelegate {
                     override fun delegate(transacao: Transacao) {
-                        listaTransacoes.add(transacao)
+                        adiciona(transacao)
                         atualizaTransacoes()
                         lista_transacoes_adiciona_menu.close(true)
                     }
                 })
     }
 
+    private fun adiciona(transacao: Transacao) {
+        listaTransacoes.add(transacao)
+    }
+
+
+
     private fun abrirDialogAlteracao(transacao: Transacao, posicao: Int) {
-        AlteraTransacaoDialog(window.decorView as ViewGroup, this)
+        AlteraTransacaoDialog(viewGroup, this)
                 .configuraDialog(transacao, object : TransacaoDelegate {
                     override fun delegate(transacao: Transacao) {
-                        listaTransacoes[posicao] = transacao
+                        altera(transacao, posicao)
                         atualizaTransacoes()
                     }
                 })
+    }
+
+    private fun altera(transacao: Transacao, posicao: Int) {
+        listaTransacoes[posicao] = transacao
     }
 
     private fun atualizaTransacoes() {
@@ -68,10 +81,12 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
 
     private fun configuraListaTransacoes() {
-        lista_transacoes_listview.adapter = ListaTransacoesAdapter(listaTransacoes, this)
-        lista_transacoes_listview.setOnItemClickListener { parent, view, position, id ->
-            val transacao = listaTransacoes[position]
-            abrirDialogAlteracao(transacao, position)
+        with(lista_transacoes_listview){
+            adapter = ListaTransacoesAdapter(listaTransacoes, this@ListaTransacoesActivity)
+            setOnItemClickListener { _, _, posicao, _ ->
+                val transacao = listaTransacoes[posicao]
+                abrirDialogAlteracao(transacao, posicao)
+            }
         }
     }
 
