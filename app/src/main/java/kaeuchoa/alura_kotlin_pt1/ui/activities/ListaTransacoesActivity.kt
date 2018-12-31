@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import kaeuchoa.alura_kotlin_pt1.R
+import kaeuchoa.alura_kotlin_pt1.extensions.dao.TransacaoDAO
 import kaeuchoa.alura_kotlin_pt1.models.TipoTransacao
 import kaeuchoa.alura_kotlin_pt1.models.Transacao
 import kaeuchoa.alura_kotlin_pt1.ui.ResumoView
@@ -18,7 +19,8 @@ import kaeuchoa.alura_kotlin_pt1.ui.dialog.AlteraTransacaoDialog
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 
 class ListaTransacoesActivity : AppCompatActivity() {
-    private val listaTransacoes : MutableList<Transacao> = mutableListOf()
+    private val transacaoDao = TransacaoDAO()
+    private val listaTransacoes = transacaoDao.listaTransacoes
     private val menuID: Int = 200
 
     private val viewGroup by lazy {
@@ -30,13 +32,12 @@ class ListaTransacoesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_lista_transacoes)
 
         configuraResumo()
-
         configuraListaTransacoes()
     }
 
     private fun configuraResumo() {
         val decorView: View = window.decorView
-        val resumoView = ResumoView(this,decorView, listaTransacoes)
+        val resumoView = ResumoView(this, decorView, listaTransacoes)
         resumoView.atualizaView()
 
         lista_transacoes_adiciona_receita.setOnClickListener {
@@ -51,28 +52,31 @@ class ListaTransacoesActivity : AppCompatActivity() {
     private fun abirDialogAdicao(tipo: TipoTransacao) {
         AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
                 .abreDialog(tipo, delegate = { transacaoCriada ->
-                        adiciona(transacaoCriada)
-                        atualizaTransacoes()
-                        lista_transacoes_adiciona_menu.close(true)
+                    adiciona(transacaoCriada)
+                    atualizaTransacoes()
+                    lista_transacoes_adiciona_menu.close(true)
                 })
     }
 
-
-
     private fun adiciona(transacao: Transacao) {
-        listaTransacoes.add(transacao)
+        transacaoDao.adiciona(transacao)
+    }
+
+    private fun altera(transacao: Transacao, posicao: Int) {
+        transacaoDao.altera(transacao,posicao)
+    }
+
+    private fun removeTransacao(posicao: Int) {
+        transacaoDao.remove(posicao)
+        atualizaTransacoes()
     }
 
     private fun abrirDialogAlteracao(transacao: Transacao, posicao: Int) {
         AlteraTransacaoDialog(viewGroup, this)
-                .abreDialog(transacao, delegate =  {transacaoAlterada ->
-                        altera(transacaoAlterada, posicao)
-                        atualizaTransacoes()
+                .abreDialog(transacao, delegate = { transacaoAlterada ->
+                    altera(transacaoAlterada, posicao)
+                    atualizaTransacoes()
                 })
-    }
-
-    private fun altera(transacao: Transacao, posicao: Int) {
-        listaTransacoes[posicao] = transacao
     }
 
 
@@ -82,7 +86,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
     }
 
     private fun configuraListaTransacoes() {
-        with(lista_transacoes_listview){
+        with(lista_transacoes_listview) {
             adapter = ListaTransacoesAdapter(listaTransacoes, this@ListaTransacoesActivity)
             setOnItemClickListener { _, _, posicao, _ ->
                 val transacao = listaTransacoes[posicao]
@@ -97,20 +101,15 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem?): Boolean {
         val menuId = item?.itemId
-        when(menuId){
+        when (menuId) {
             this.menuID -> {
                 val menuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
                 val posicao = menuInfo.position
                 removeTransacao(posicao)
-                Snackbar.make(rlMainLayout,getString(R.string.msg_transacao_removida), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(rlMainLayout, getString(R.string.msg_transacao_removida), Snackbar.LENGTH_LONG).show()
             }
         }
         return super.onContextItemSelected(item)
-    }
-
-    private fun removeTransacao(posicao: Int) {
-        listaTransacoes.removeAt(posicao)
-        atualizaTransacoes()
     }
 
 
