@@ -13,4 +13,6 @@
     <string name="total">Total</string>
     <string name="mes">Mês</string>
     <string name="ano">Ano</string>
+    <string name="btn_positive_altera">Altera</string>
+    <string name="btn_positive_adiciona">Adicionar</string>
 </resources>

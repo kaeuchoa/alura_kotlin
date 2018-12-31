@@ -19,12 +19,15 @@ import java.lang.NumberFormatException
 import java.math.BigDecimal
 import java.util.*
 
-open class FormularioTransacaoDialog (private val context: Context,
-                                      private val viewGroup: ViewGroup) {
+abstract class FormularioTransacaoDialog (private val context: Context,
+                                          private val viewGroup: ViewGroup) {
+
     private val viewFormulario: View = criaLayout()
     protected val campoCategoria = viewFormulario.spin_transacao_categoria
     protected val campoData = viewFormulario.form_transacao_data
     protected val campoValor = viewFormulario.form_transacao_valor
+
+    abstract val tituloBotaoPositivo: String
 
     fun abreDialog(tipo: TipoTransacao, transacaoDelegate: TransacaoDelegate) {
         configuraCampoData()
@@ -36,7 +39,7 @@ open class FormularioTransacaoDialog (private val context: Context,
         val titulo = tituloPor(tipo)
         AlertDialog.Builder(context)
                 .setTitle(titulo)
-                .setPositiveButton("Adicionar") { _, _ ->
+                .setPositiveButton(tituloBotaoPositivo) { _, _ ->
                     val valorEmTexto = campoValor.text.toString()
 
                     val valor = converteCampoValor(valorEmTexto)
@@ -56,13 +59,7 @@ open class FormularioTransacaoDialog (private val context: Context,
                 .show()
     }
 
-    private fun tituloPor(tipo: TipoTransacao): Int {
-        if (tipo == TipoTransacao.RECEITA) {
-            return R.string.adiciona_receita
-        }
-        return R.string.adiciona_despesa
-
-    }
+    abstract fun tituloPor(tipo: TipoTransacao): Int
 
     private fun converteCampoValor(valorEmTexto: String): BigDecimal {
         return try {
