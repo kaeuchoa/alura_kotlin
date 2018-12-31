@@ -15,4 +15,6 @@
     <string name="ano">Ano</string>
     <string name="btn_positive_altera">Altera</string>
     <string name="btn_positive_adiciona">Adicionar</string>
+    <string name="context_menu_title">Remover</string>
+    <string name="msg_transacao_removida">Transação Removida</string>
 </resources>

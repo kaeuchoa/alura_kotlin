@@ -1,9 +1,13 @@
 package kaeuchoa.alura_kotlin_pt1.ui.activities
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import kaeuchoa.alura_kotlin_pt1.R
 import kaeuchoa.alura_kotlin_pt1.models.TipoTransacao
 import kaeuchoa.alura_kotlin_pt1.models.Transacao
@@ -15,6 +19,8 @@ import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 
 class ListaTransacoesActivity : AppCompatActivity() {
     private val listaTransacoes : MutableList<Transacao> = mutableListOf()
+    private val menuID: Int = 200
+
     private val viewGroup by lazy {
         window.decorView as ViewGroup
     }
@@ -51,11 +57,11 @@ class ListaTransacoesActivity : AppCompatActivity() {
                 })
     }
 
+
+
     private fun adiciona(transacao: Transacao) {
         listaTransacoes.add(transacao)
     }
-
-
 
     private fun abrirDialogAlteracao(transacao: Transacao, posicao: Int) {
         AlteraTransacaoDialog(viewGroup, this)
@@ -69,11 +75,11 @@ class ListaTransacoesActivity : AppCompatActivity() {
         listaTransacoes[posicao] = transacao
     }
 
+
     private fun atualizaTransacoes() {
         configuraResumo()
         configuraListaTransacoes()
     }
-
 
     private fun configuraListaTransacoes() {
         with(lista_transacoes_listview){
@@ -82,9 +88,30 @@ class ListaTransacoesActivity : AppCompatActivity() {
                 val transacao = listaTransacoes[posicao]
                 abrirDialogAlteracao(transacao, posicao)
             }
+
+            setOnCreateContextMenuListener { menu, _, _ ->
+                menu.add(Menu.NONE, menuID, Menu.NONE, getString(R.string.context_menu_title))
+            }
         }
     }
 
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        val menuId = item?.itemId
+        when(menuId){
+            this.menuID -> {
+                val menuInfo = item.menuInfo as AdapterView.AdapterContextMenuInfo
+                val posicao = menuInfo.position
+                removeTransacao(posicao)
+                Snackbar.make(rlMainLayout,getString(R.string.msg_transacao_removida), Snackbar.LENGTH_LONG).show()
+            }
+        }
+        return super.onContextItemSelected(item)
+    }
+
+    private fun removeTransacao(posicao: Int) {
+        listaTransacoes.removeAt(posicao)
+        atualizaTransacoes()
+    }
 
 
 }
