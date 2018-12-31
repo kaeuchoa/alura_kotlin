@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
 import kaeuchoa.alura_kotlin_pt1.R
-import kaeuchoa.alura_kotlin_pt1.delegate.TransacaoDelegate
 import kaeuchoa.alura_kotlin_pt1.models.TipoTransacao
 import kaeuchoa.alura_kotlin_pt1.models.Transacao
 import kaeuchoa.alura_kotlin_pt1.ui.ResumoView
@@ -45,12 +44,10 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
     private fun abirDialogAdicao(tipo: TipoTransacao) {
         AdicionaTransacaoDialog(window.decorView as ViewGroup, this)
-                .abreDialog(tipo, object : TransacaoDelegate {
-                    override fun delegate(transacao: Transacao) {
-                        adiciona(transacao)
+                .abreDialog(tipo, delegate = { transacaoCriada ->
+                        adiciona(transacaoCriada)
                         atualizaTransacoes()
                         lista_transacoes_adiciona_menu.close(true)
-                    }
                 })
     }
 
@@ -62,11 +59,9 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
     private fun abrirDialogAlteracao(transacao: Transacao, posicao: Int) {
         AlteraTransacaoDialog(viewGroup, this)
-                .abreDialog(transacao, object : TransacaoDelegate {
-                    override fun delegate(transacao: Transacao) {
-                        altera(transacao, posicao)
+                .abreDialog(transacao, delegate =  {transacaoAlterada ->
+                        altera(transacaoAlterada, posicao)
                         atualizaTransacoes()
-                    }
                 })
     }
 

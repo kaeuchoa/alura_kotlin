@@ -3,7 +3,6 @@ package kaeuchoa.alura_kotlin_pt1.ui.dialog
 import android.content.Context
 import android.view.ViewGroup
 import kaeuchoa.alura_kotlin_pt1.R
-import kaeuchoa.alura_kotlin_pt1.delegate.TransacaoDelegate
 import kaeuchoa.alura_kotlin_pt1.extensions.formataParaBrasileiro
 import kaeuchoa.alura_kotlin_pt1.models.TipoTransacao
 import kaeuchoa.alura_kotlin_pt1.models.Transacao
@@ -19,9 +18,9 @@ class AlteraTransacaoDialog(viewGroup: ViewGroup,
         return R.string.altera_despesa
     }
 
-    fun abreDialog(transacao: Transacao, transacaoDelegate: TransacaoDelegate) {
+    fun abreDialog(transacao: Transacao, delegate: (transacao: Transacao) -> Unit) {
         val tipo: TipoTransacao = transacao.tipo
-        super.abreDialog(tipo, transacaoDelegate)
+        super.abreDialog(tipo, delegate)
         inicializaCampos(transacao, tipo)
 
     }
