@@ -7,6 +7,8 @@ Código desenvolvido com base nas aulas dos cursos da plataforma de ensino onlin
   <li> <strong> Kotlin parte 3: Técnicas avançadas na sua app </strong> - Concluído</li>
 </ul>
 
+<a href="https://github.com/kaeuchoa/alura_kotlin/tree/master/imgs">[Lista de Imagens da aplicação]</a>
+
 Dentro deste projeto foram abordados os seguintes tópicos:
 <ul>
   <li>
